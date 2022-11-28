@@ -1,0 +1,140 @@
+{% extends "base" %}
+{% block content %}
+
+<div class="col-12" >
+<ul class="list-group mt-3 mt-md-5">
+    {% for showing in showings%}
+    <li class="card col-12 movie-card neon-border my-2">
+        <span class="position-absolute align-self-end pt-3 pe-3 delete-button visually-hidden"
+              onclick="deleteShowing({{showing.id}})">X</span>
+        <div class="card-body row">
+            <img alt="poster for {{showing.title}}"
+                 class="lazy my-auto neon-border bg-black card-img schedule-poster col-sm-4 me-2"
+                 data-src={{showing.poster}}/>
+            <div class="col-sm-8 pt-sm-3">
+                <h5 class="card-title fw-bold py-2">{{showing.title}}</h5>
+                <h5 class="card-title fw-bold py-2">{{showing.showtime | date(format="%b %d, %Y")}}</h5>
+                <span class="card-title fw-bold py-2">{{showing.plot}}</span>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+
+<!-- PREVIOUS SHOWINGS -->
+    <div class="mt-5 list-group" id="previous-showings">
+        <span class="px-0 mx-0 delete-button text-decoration-underline mt-5" onclick="getPreviousShowings()">Previous Showings</span>
+        <span id="loader" class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<script>
+    mn.setNav("schedule-link")
+    let lazyload = new LazyLoad();
+
+    let got_previous = false;
+
+    let getPreviousShowings = function () {
+        lemonade.render(previousShowings, document.getElementById("previous-showings"));
+    }
+
+    if({{logged_in}}) {
+        let delete_buttons = document.getElementsByClassName("delete-button");
+        [...delete_buttons].forEach(delete_button => delete_button.classList.remove("visually-hidden"));
+    }
+
+    let deleteShowing = function (id) {
+        let confirmed = confirm("Delete showing?");
+
+        if (!confirmed) {
+            return false;
+        }
+
+        return fetch("/api/schedules/" + id, {
+            method: "DELETE",
+            headers: {"Content-type": "application/json"}
+        })
+            .then(response => response.json())
+            .then(_json => {
+                window.location.reload();
+            });
+    }
+
+    let previousShowings = function () {
+            let self = {};
+
+            self.methods = {
+                "getShowings": function (schedule_id) {
+                    if(got_previous) {
+                        return false;
+                    }
+
+                    document.getElementById("loader").classList.toggle("visually-hidden")
+
+                     return fetch("/api/schedules/" + schedule_id + "?previous=true", {
+                        method: "GET",
+                        headers: {"Content-type": "application/json"}
+                    })
+                        .then(response => response.json())
+                        .then(showings => {
+                            self.showings = showings
+                            got_previous = true;
+                            lazyload.update()
+                            document.getElementById("loader").classList.toggle("visually-hidden")
+                        })
+                        .catch(err => console.log(err));
+                },
+                "deleteShowing": function (list_id, movie_id) {
+                    let confirmed = confirm("Remove movie from list?");
+
+                    if (!confirmed) {
+                        return false;
+                    }
+
+                    return fetch("/api/movies/l/" + list_id + "/m/" + movie_id, {
+                        method: "DELETE",
+                        headers: {"Content-type": "application/json", "token": mn.getToken()}
+                    })
+                        .then(response => response.json())
+                        .then(_json => {
+                            self.filtered_movies = self.filtered_movies.filter((movie) => {
+                                return movie.id !== movie_id
+                            })
+                        })
+                        .catch(err => console.log(err));
+                },
+                "parseDate": function(showtime) {
+                    let parsed_date =  new Date(showtime);
+                    let options = {month: "short", day: "numeric", year: "numeric"};
+                    let dateTimeFormat = new Intl.DateTimeFormat('en-US', options)
+
+                    return dateTimeFormat.format(parsed_date)
+                }
+            };
+
+        self.showings = self.methods.getShowings(1);
+
+            let template = `
+            <ul class="col-12 list-group mt-2" @loop="self.showings">
+            {% raw %}
+              <li class="card col-12 movie-card neon-border my-2">
+                <span class="position-absolute align-self-end pt-3 pe-3 delete-button visually-hidden"
+                      onclick="self.parent.methods.deleteShowing(self.id)">X</span>
+                <div class="card-body row">
+                    <img alt="poster for {{self.title}}"
+                         class="lazy my-auto neon-border bg-black card-img schedule-poster col-sm-4 me-2"
+                         data-src={{self.poster}}/>
+                    <div class="col-sm-8 pt-sm-3">
+                        <h5 class="card-title fw-bold py-2">{{self.title}}</h5>
+                        <h5 class="card-title fw-bold py-2">{{self.parent.methods.parseDate(self.showtime)}}</h5>
+                        <span class="card-title fw-bold py-2">{{self.plot}}</span>
+                    </div>
+                </div>
+              </li>
+            {% endraw %}
+            </ul>
+        `;
+            return lemonade.element(template, self)
+        }
+</script>
+{% endblock content %}

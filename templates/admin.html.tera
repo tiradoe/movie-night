@@ -1,0 +1,121 @@
+{% extends "base" %}
+{% block content %}
+
+<form class="p-3 p-sm-0 row col-12 align-items-center" onsubmit="findMovies(); return false">
+    <label class="px-0 " for="search-field">Search</label>
+    <div class="px-0 mx-0">
+        <input class="p-1" id="search-field" name="search-field" type="text"/>
+        <button class="btn" onclick="findMovies()" type="button">Submit</button>
+    </div>
+</form>
+<div id="movie-search"></div>
+
+<script>
+    mn.setNav("admin-link");
+
+    let addMovie = function (imdb_id, list_id) {
+        return fetch("/api/lists/movie", {
+            method: "POST",
+            body: JSON.stringify({imdb_id: imdb_id, list_id: list_id}),
+            headers: {"Content-type": "application/json"}
+        })
+            .then(response => response.json())
+            .then(_json => {
+                closeModal()
+            })
+            .catch(err => console.log(err))
+    }
+
+    let findMovies = async function () {
+        if (document.getElementById("movie-list")) {
+            document.getElementById("movie-list").remove();
+        }
+
+        let searchTerm = document.getElementById('search-field').value
+        return fetch("/api/movies/search/" + searchTerm, {
+            method: "GET",
+            headers: {"Content-type": "application/json"}
+        })
+            .then(response => response.json())
+            .then(json => {
+                lemonade.render(MovieList(json), document.getElementById('movie-search'));
+            })
+            .catch(err => console.log(err))
+    }
+
+    const MovieList = function (data) {
+        let self = {}
+        self.movies = data;
+
+        let template = `
+            {% raw %}
+            <div class="p-3 p-sm-0">
+            <ul id="movie-list" class="p-sm-0 p-3 row mt-2 mt-sm-5 px-0" @loop="self.movies">
+                <li class="card col-6 col-sm-6 col-md-4 col-lg-3 p-1  mb-3 movie-card neon-border">
+                    <div class="card-body row">
+                        <!-- POSTER -->
+                        <img alt="movie poster" class="card-img" src="{{self.Poster}}" />
+                            <!-- TITLE -->
+                            <h5 class="card-title fw-bold p-2">{{self.Title}}</h5>
+                            <button type="button" class="btn" onclick="showModal(self.imdbID, self.Title, self.Poster)">Add</button>
+                    </div>
+                </li>
+            </ul>
+            </div>
+            {% endraw %}
+        `;
+        return lemonade.element(template, self)
+    }
+
+    const Modal = function (id, title, poster) {
+        let self = {};
+        self.title = title;
+        self.poster = poster;
+        self.imdb_id = id;
+        self.list_id = null;
+
+        let template = `
+         <div id="movie-modal" class="movie-modal movie-card">
+             <span class="fw-bold pe-5 pt-5 position-absolute end-0" onclick="closeModal()">X</span>
+             <div class="p-5 rounded movie-modal-content neon-border">
+                     <div class="row">
+                         <div class="col-sm-6">
+                            {%raw%}
+                             <h2 class="row pb-3" id="modal-title">{{self.title}}</h2>
+                            {%endraw%}
+                             <div class="row">
+                                 <label class="px-0 mx-0 pb-1" for="list-picker">Add To List</label><br/>
+                                 <select id="list-picker" @bind="self.list_id">
+                                    {% for list in lists %}
+                                     <option value="{{list.id}}">{{list.name}}</option>
+                                    {% endfor %}
+                                 </select>
+                             </div>
+                             <input aria-hidden="true" class="visually-hidden" id="movie-id" type="text"/>
+                             <button class="row modal-poster btn mt-5" onclick="addMovie(self.imdb_id, parseInt(self.list_id))" type="button">Submit
+                             </button>
+                         </div>
+                         <!-- MODAL POSTER -->
+                         <div class="col-sm-6 text-end">
+                            {%raw%}
+                             <img alt="poster" class="col-sm-6 d-none d-sm-inline-flex" id="modal-poster" src="{{self.poster}}"/>
+                            {%endraw%}
+                         </div>
+                     </div>
+             </div>
+         </div>
+            `
+
+        return lemonade.element(template, self)
+    }
+
+    let showModal = function (id, title, poster) {
+        lemonade.render(Modal(id, title, poster), document.getElementById('movie-search'));
+    }
+
+    let closeModal = function () {
+        document.getElementById("movie-modal").remove();
+    }
+
+</script>
+{% endblock content %}

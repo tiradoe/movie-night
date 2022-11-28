@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-01-1922_create-users/up.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-02-033724_create_movies/up.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-03-2239_create-movielists/up.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-04-2353_create-movielists-movie/up.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-15-2030_create-schedules/down.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-15-2030_create-schedules/up.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-15-2045_create-showings/down.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-15-2045_create-showings/up.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-23-1750_create-sessions/up.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/migrations/2022-11-23-1925_drop-users-token-column/up.sql" dialect="MariaDB" />
+  </component>
+</project>

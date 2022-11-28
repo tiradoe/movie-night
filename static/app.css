@@ -1,0 +1,103 @@
+@font-face {
+    font-family: 'BloodSeeker';
+    src: url('fonts/bloodseeker.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Xolonium';
+    src: url('fonts/xolonium-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body, .list-header {
+    background: #080809;
+    font-family: "Xolonium";
+}
+
+.movie-card {
+    /*background: #0a0d40;*/
+    background: #1b1f24;
+    color: white;
+}
+
+.schedule-poster {
+    width: 15em;
+    height: 15em;
+    object-fit: fill;
+    padding: .5em;
+}
+
+.btn {
+    color: white;
+    border: unset;
+    background: #6f0b51;
+}
+
+.btn:hover {
+    background: #a80f7a;
+}
+
+.neon-border {
+    border: #6f0b51 1px solid;
+}
+
+.site-title {
+    font-size: 20pt;
+    text-decoration: none;
+}
+
+.site-title:hover {
+    color: #6f0b51 !important;
+}
+
+.header {
+    border-bottom: #6f0b51 solid 2px;
+}
+
+.bloodseeker {
+    font-family: "BloodSeeker";
+}
+
+.header-link {
+    text-decoration: none;
+    font-size: 15pt;
+}
+
+.header-link:hover {
+    color: #6f0b51 !important;
+}
+
+.selected-link {
+    color: #6f0b51 !important;
+}
+
+.movie-modal {
+    position: fixed; /* Stay in place */
+    left: 0;
+    top: 0;
+    width: 100vw; /* Full width */
+    height: 100vh; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background: #080809;
+    z-index: 10000;
+}
+
+/* Modal Content/Box */
+.movie-modal-content {
+    background: #1b1f24;
+    min-height: 20rem;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.hover-pointer {
+    cursor: pointer;
+}
+
+.delete-button:hover, .logout-button:hover, .close-button:hover {
+    cursor: pointer;
+}

@@ -1,0 +1,8 @@
+{% extends "base" %}
+{% block content %}
+
+<div class="col-12 row">
+    <h1>500</h1>
+    <img alt="error" src="https://media.tenor.com/Z2rsEAfen6wAAAAd/nicolas-cage-not-the-bees.gif"/>
+</div>
+{% endblock content %}

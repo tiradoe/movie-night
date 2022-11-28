@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+    <title>Movie Night</title>
+
+    <link href="/static/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+    <link href="/static/bootstrap/bootstrap.css" rel="stylesheet"/>
+    <link href="/static/app.css" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/lemonadejs/dist/lemonade.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    {% endblock head %}
+</head>
+
+<body class="text-white">
+<div class="container pb-5" id="container">
+    <div class="mx-2 mx-sm-0 row my-3 my-sm-5 header bloodseeker">
+        <a class="col-md-4 site-title px-0 mx-0 link-light" href="/">Cinema Corona</a>
+
+        <div class="pt-2 sm-pt-0 col-md-8 align-self-end text-end links">
+            <a class="link-light header-link visually-hidden" href="/admin" id="admin-link">Admin</a>
+            <a class="link-light header-link ps-3" href="/lists" id="lists-link">Lists</a>
+            <a class="link-light header-link ps-3" href="/schedules/1" id="schedule-link">Schedule</a>
+            <a class="link-light header-link ps-3 logout-button visually-hidden" id="logout-link"
+               onclick="logout()">X</a>
+        </div>
+    </div>
+    {% block content %}{% endblock content %}
+</div>
+
+</body>
+
+<script>
+    if (mn.getToken() !== "") {
+        document.getElementById("admin-link").classList.toggle("visually-hidden");
+        document.getElementById("logout-link").classList.toggle("visually-hidden");
+    }
+
+    let logout = function () {
+        fetch("/api/logout", {
+            method: "PUT",
+            headers: {"Content-type": "application/json"}
+        })
+            .then(response => response.json())
+            .then(_json => {
+                window.location = "/";
+            })
+            .catch(err => console.log(err))
+    }
+</script>
+</html>
+

@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  db:
+    container_name: movienight_db
+    image: mariadb
+    restart: always
+    ports:
+      - "3307:3306"
+    env_file: .env
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
